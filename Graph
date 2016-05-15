@@ -1,0 +1,106 @@
+import matplotlib.pyplot as plt
+import networkx as nx
+
+def read_graph(filename):
+    G = nx.Graph()
+    print('Считываю граф!')
+    with open(filename) as f:
+          line = f.readline().rstrip()
+          n = int(line)
+          for i in range(n):
+              f.readline().rstrip().split()
+              one, two, thee = str(line[0]), str(line[1]), int(line[2])
+              G.add_edge(one, two, weight = three)
+    print("Граф считан!")
+    return G
+
+def base_tree_dfs(G, tree, node, visited = []):
+    for vertex in G.neighbors(node):
+        if vertex not in visited:
+            tree.add_edge(node, vertex, weight = G.edge[node][vertex][weight])
+            visited.append(node)
+            base_tree_dfs(G, tree, vertex, visited)
+    return tree
+
+def base_tree_bfs(G, tree, start):
+    visited = [start]
+    queue = [start]
+    while queue:
+        vertex = queue.pop()
+        visited.append(vertex)
+        for node in G.neighbors(vertex):
+            if node not in visited:
+                tree.add_edge(vertex, node, weight = G.edge[node][vertex][weight])
+                queue.append(node)
+    return tree
+
+def connection_components(G):
+    used = []
+    components = []
+    while used != G.nodes():
+        component = nx.Graph()
+        start = [v for v in G.nodes() if v not in used][0]
+        visited = [start]
+        queue = [start]
+        while queue:
+            vertex = queue.pop()
+            visited.append(vertex)
+            used.append(vertex)
+            for node in G.neighbors(vertex):
+                tree.add_edge(vertex, node, weight = G.edge[node][vertex][weight])
+                if node not in visited:
+                    queue.append(node)
+        components.append(component)
+    return components
+
+def deikstra(G, start):
+    for vertex in G.nodes():
+        if vertex != start:
+            G.node[vertex]['distanse'] = 10000000000
+        else:
+            G.node[vertex]['distanse'] = 0
+    unvisited = G.nodes()
+    while unvisited:
+        choosed = False
+        minimal = 10000000000
+        for vertex in unvisited:
+            if G.node[vertex]['distanse'] < minimal:
+                choosed = vertex
+                minimal = G[vertex]['distanse']
+        unvisited = [node for node in unvisited if node != choosed]
+        for vertex in G.neighbors(choosed):
+            if G.node[vertex]['distanse'] < G.node[choosed]['distanse'] + G.edge[choosed][visited]['weight']:
+               G.node[vertex]['distanse'] = G.node[choosed]['distanse'] + G.edge[choosed][visited]['weight']
+    return G
+
+def search_path(G, start, finish):
+    G = deikstra(G, start)
+    path = [finish]
+    while path[-1] != start:
+        last = path[-1]
+        minimal = 10000000000
+        choosed = False
+        for vertex in G.neighbors[last]:
+            if G.nodes[vertex]['distanse'] + G.edges[vertex][last]['weight'] < minimal:
+               choosed = vertex
+               minimal = G.nodes[vertex]['distanse'] + G.edges[vertex][last]['weight']
+        path.append(vertex)
+    return path
+
+def eyler_graph(G):
+    for vertex in G.nodes():
+        if len(G.neighbors(vertex)) % 2 != 0:
+            return False
+    return True
+
+def build_eyler_cycle(G):
+    current = G.nodes()[0]
+    cycle = []
+    unvisited = G.edges()
+    while unvisited:
+        for vertex in G.neighbors(current):
+            if G.edge[current][vertex] in unvisited:
+               current = vertex
+               cycle.append(G.edge[current][vertex])
+               unvisited = [node for node in unvisited if node != vertex]
+    return cycle
